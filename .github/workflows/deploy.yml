@@ -1,0 +1,52 @@
+name: Deploy to DigitalOcean Droplet
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Setup Node
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install & build server
+      working-directory: quiz-api
+      run: |
+        npm ci
+
+    - name: Install & build client
+      working-directory: cmca-quiz-client
+      run: |
+        npm ci
+        npm run build
+
+    - name: Copy client to Droplet
+      uses: appleboy/scp-action@v0.1.5
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        source: "cmca-quiz-client/dist/*"
+        target: "/var/www/cmca-quiz-client"
+
+    - name: Deploy server via SSH
+      uses: appleboy/ssh-action@v0.1.8
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        script: |
+          cd ~/quiz-api
+          git pull origin main
+          npm ci
+          pm2 restart cmca-quiz-api
+          sudo systemctl reload nginx
