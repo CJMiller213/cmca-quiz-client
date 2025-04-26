@@ -9,7 +9,7 @@ jobs:
   deploy_client:
     runs-on: ubuntu-latest
     steps:
-      - name: Check out code
+      - name: Check out client code
         uses: actions/checkout@v4
 
       - name: Setup Node.js
@@ -17,7 +17,7 @@ jobs:
         with:
           node-version: '18'
 
-      - name: Install & build client
+      - name: Install dependencies & build
         run: |
           npm ci
           npm run build
@@ -29,10 +29,9 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          script: |
-            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /var/www/cmca-quiz-client
+          script: sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /var/www/cmca-quiz-client
 
-      - name: Deploy client via SCP
+      - name: Deploy built files via SCP
         uses: appleboy/scp-action@v0.1.5
         with:
           host: ${{ secrets.SSH_HOST }}
