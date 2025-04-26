@@ -16,14 +16,14 @@ const App: React.FC = () => {
   useEffect(() => {
     fetchQuestions()
       .then(res => {
-        const qs = res.data;
-        setAllQuestions(qs);
-        // extract unique subjects
-        const uniq = Array.from(new Set(qs.map(q => q.subject)));
-        setSubjects(uniq);
+        /* handle success */
+        setAllQuestions(res.data);
+        setSubjects([...new Set(res.data.map(q => q.subject))]);
+        setLoading(false);
+      }).catch(err => {
+        setError(err.message || 'Failed to fetch');
+        setLoading(false)
       })
-      .catch(err => setError(err.message || 'Failed to fetch'))
-      .finally(() => setLoading(false));
   }, []);
 
   if (loading) return <p>Loading…</p>;
