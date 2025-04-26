@@ -1,0 +1,33 @@
+name: Deploy Client to DigitalOcean
+
+on:
+  push:
+    branches: [ main ]
+
+jobs:
+  build_and_deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Check out code
+      uses: actions/checkout@v4
+
+    - name: Use Node.js 18
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+
+    - name: Install & build client
+      run: |
+        npm ci
+        npm run build
+
+    - name: Deploy client via SCP
+      uses: appleboy/scp-action@v0.1.5
+      with:
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USER }}
+        key: ${{ secrets.SSH_KEY }}
+        port: ${{ secrets.SSH_PORT || 22 }}
+        source: "dist/*"
+        target: "/var/www/cmca-quiz-client"
