@@ -50,5 +50,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          source: "dist/*"
+          source: "dist"
           target: "/var/www/cmca-quiz-client"
+          strip_components: 1
