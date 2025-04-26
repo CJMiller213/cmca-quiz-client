@@ -79,7 +79,7 @@ const App: React.FC = () => {
       <hr />
 
       <section>
-        <h2>Create New Questioioioioiblahblahblahoioiiion</h2>
+        <h2>Create New Blarg?</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label>
