@@ -8,6 +8,7 @@ on:
 jobs:
   deploy_client:
     runs-on: ubuntu-latest
+
     steps:
       - name: Check out client code
         uses: actions/checkout@v4
@@ -29,7 +30,18 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
-          script: sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /var/www/cmca-quiz-client
+          script: |
+            sudo chown -R ${{ secrets.SSH_USER }}:${{ secrets.SSH_USER }} /var/www/cmca-quiz-client
+
+      - name: Clean out old client files
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_KEY }}
+          port: ${{ secrets.SSH_PORT || 22 }}
+          script: |
+            sudo rm -rf /var/www/cmca-quiz-client/*
 
       - name: Deploy built files via SCP
         uses: appleboy/scp-action@v0.1.5
