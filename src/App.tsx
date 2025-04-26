@@ -79,8 +79,7 @@ const App: React.FC = () => {
       <hr />
 
       <section>
-        <h3>This is a test to see if we are updated automatically!</h3>
-        <h2>Create New Question</h2>
+        <h2>Create New Questioioioioioioiiion</h2>
         <form onSubmit={handleSubmit}>
           <div>
             <label>
