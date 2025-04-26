@@ -41,7 +41,7 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           port: ${{ secrets.SSH_PORT || 22 }}
           script: |
-            sudo rm -rf /var/www/cmca-quiz-client/*
+            rm -rf /var/www/cmca-quiz-client/*
 
       - name: Deploy built files via SCP
         uses: appleboy/scp-action@v0.1.5
